@@ -2,6 +2,14 @@
   <div class="container">
     <h1>Login</h1>
     <form @submit.prevent="requestLogIn">
+
+      <p v-if="errors.length">
+        <b>Please correct the following error(s):</b>
+        <ul>
+          <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+        </ul>
+      </p>
+
       <div class="form-group">
         <label>Username:</label>
         <input type="text" class="form-control" required="true" v-model="user.username">
@@ -46,9 +54,7 @@
           //TODO: Save JWT received in response body in application store (API Needs update)
         })
         .catch(e => {
-          this.$toasted.error("Failed to log in, please try again");
-          console.log(e);
-          //TODO: Display server error message once error code is fixed to 422 (Unprocessable Entity)
+          this.errors = e.response.data.errors
         })
       }
     }
