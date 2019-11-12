@@ -20,6 +20,8 @@
 </template>
 
 <script>
+  import API from "../../lib/api.js"
+
   export default {
     data(){
       return {
@@ -29,7 +31,25 @@
     },
     methods: {
       requestLogIn(){
-        console.log(this.user.username);
+        let requestBody = {
+          user: {
+            username: this.user.username,
+            password: this.user.password
+          }
+        }
+
+        API.post("/login", requestBody)
+        .then(response => {
+          this.$toasted.success("Logged in successfully");
+          this.$router.push("/");
+          console.log(response);
+          //TODO: Save JWT received in response body in application store (API Needs update)
+        })
+        .catch(e => {
+          this.$toasted.error("Failed to log in, please try again");
+          console.log(e);
+          //TODO: Display server error message once error code is fixed to 422 (Unprocessable Entity)
+        })
       }
     }
   }
