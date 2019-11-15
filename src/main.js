@@ -3,11 +3,12 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
-import Toasted from 'vue-toasted';
+import Buefy from "buefy";
+import "buefy/dist/buefy.css";
 
 Vue.config.productionTip = false;
 
-Vue.use(Toasted)
+Vue.use(Buefy);
 
 new Vue({
   router,
