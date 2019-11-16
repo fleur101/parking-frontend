@@ -28,7 +28,6 @@
 </template>
 
 <script>
-  import API from "../../lib/api.js"
 
   export default {
     data(){
@@ -38,24 +37,8 @@
       }
     },
     methods: {
-      requestLogIn(){
-        let requestBody = {
-          user: {
-            username: this.user.username,
-            password: this.user.password
-          }
-        }
-
-        API.post("/login", requestBody)
-        .then(response => {
-          this.$toasted.success("Logged in successfully");
-          this.$router.push("/");
-          console.log(response);
-          //TODO: Save JWT received in response body in application store (API Needs update)
-        })
-        .catch(e => {
-          this.errors = e.response.data.errors
-        })
+      async requestLogIn() {
+        await this.$store.dispatch("user/authenticate", { user: {...this.user }});
       }
     }
   }
