@@ -12,6 +12,14 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_URL || "http://localhost:4000/api/v1"
 });
 
+axiosInstance.interceptors.response.use(
+  response => response,
+  error => {
+    const errorResponse = error.response ? error.response : error.message;
+    return Promise.reject(errorResponse);
+  }
+);
+
 Vue.prototype.$axios = axiosInstance;
 Vuex.Store.prototype.$axios = axiosInstance;
 

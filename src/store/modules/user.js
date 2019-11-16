@@ -9,8 +9,8 @@ export default {
         const { data } = await this.$axios.post("/login", user);
         commit("addUser", data.data);
         localStorage.setItem("jwt-token", data.token);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
       }
     }
   },
