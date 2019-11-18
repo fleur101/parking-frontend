@@ -12,6 +12,10 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    logout({ commit }) {
+      localStorage.removeItem("jwt-token");
+      commit("addUser", {});
     }
   },
   mutations: {
@@ -21,7 +25,7 @@ export default {
   },
   getters: {
     isAuthenticated: () => !!localStorage.getItem("jwt-token"),
-    jwt: () => localStorage.getItem("jwt-token"),
+    jwt: () => localStorage.getItem("jwt-token") || "",
     get: state => state.user
   }
 };
