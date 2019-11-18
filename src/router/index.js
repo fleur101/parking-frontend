@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
 import store from "../store";
+import SearchPage from "../views/SearchPage.vue";
 
 Vue.use(VueRouter);
 
@@ -41,6 +42,11 @@ const routes = [
     name: "signup",
     component: SignUp,
     beforeEnter: ifNotAuthenticated
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: SearchPage
   }
 ];
 

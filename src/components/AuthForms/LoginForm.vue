@@ -38,15 +38,17 @@
 
 <script>
 export default {
-  data(){
+  data() {
     return {
       user: {},
       errors: []
-    }
+    };
   },
   methods: {
     async requestLogIn() {
-      await this.$store.dispatch("user/authenticate", { user: {...this.user }});
+      await this.$store.dispatch("user/authenticate", {
+        user: { ...this.user }
+      });
       this.$buefy.toast.open({
         message: "Logged in successfully",
         type: "is-success"
