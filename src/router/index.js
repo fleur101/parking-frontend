@@ -3,24 +3,26 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
-import store from "../store";
+import SearchPage from "../views/SearchPage.vue";
 
 Vue.use(VueRouter);
 
+const isAuthenticated = () => !!localStorage.getItem("jwt-token");
+
 const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters["user/isAuthenticated"]) {
+  if (!isAuthenticated()) {
     next();
-    return;
+  } else {
+    next("/");
   }
-  next("/");
 };
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters["user/isAuthenticated"]) {
+  if (isAuthenticated()) {
     next();
-    return;
+  } else {
+    next("/login");
   }
-  next("/login");
 };
 
 const routes = [
@@ -41,6 +43,12 @@ const routes = [
     name: "signup",
     component: SignUp,
     beforeEnter: ifNotAuthenticated
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: SearchPage,
+    beforeEnter: ifAuthenticated
   }
 ];
 

@@ -38,19 +38,29 @@
 
 <script>
 export default {
-  data(){
+  data() {
     return {
       user: {},
       errors: []
-    }
+    };
   },
   methods: {
     async requestLogIn() {
-      await this.$store.dispatch("user/authenticate", { user: {...this.user }});
-      this.$buefy.toast.open({
-        message: "Logged in successfully",
-        type: "is-success"
+      const errors = await this.$store.dispatch("user/authenticate", {
+        user: { ...this.user }
       });
+      if (!errors) {
+        this.$buefy.toast.open({
+          message: "Logged in successfully",
+          type: "is-success"
+        });
+        this.$router.push("/");
+      } else {
+        this.$buefy.toast.open({
+          message: "Login failed",
+          type: "is-danger"
+        });
+      }
     }
   }
 };
