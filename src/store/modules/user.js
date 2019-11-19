@@ -7,10 +7,12 @@ export default {
     async authenticate({ commit }, user) {
       try {
         const { data } = await this.$axios.post("/login", user);
-        commit("addUser", data.data);
         localStorage.setItem("jwt-token", data.token);
-      } catch (error) {
-        console.log(error);
+        commit("addUser", data.data);
+        return true;
+      } catch (response) {
+        console.log(response);
+        return false;
       }
     },
     logout({ commit }) {

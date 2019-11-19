@@ -9,19 +9,21 @@ import SearchPage from "../views/SearchPage.vue";
 Vue.use(VueRouter);
 
 const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters["user/isAuthenticated"]) {
+  // TODO: fix the getters, currently I did direct token check
+  if (!localStorage.getItem("jwt-token")) {
     next();
-    return;
+  } else {
+    next("/");
   }
-  next("/");
 };
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters["user/isAuthenticated"]) {
+  console.log(store.getters);
+  if (localStorage.getItem("jwt-token")) {
     next();
-    return;
+  } else {
+    next("/login");
   }
-  next("/login");
 };
 
 const routes = [
@@ -46,7 +48,17 @@ const routes = [
   {
     path: "/search",
     name: "search",
-    component: SearchPage
+    component: SearchPage,
+    beforeEnter: ifAuthenticated
+  },
+  {
+    path: "/logout",
+    name: "logout",
+    beforeEnter: (to, from, next) => {
+      console.log("Logging out");
+      store.dispatch("user/logout");
+      next("/login");
+    }
   }
 ];
 

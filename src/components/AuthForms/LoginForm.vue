@@ -46,13 +46,22 @@ export default {
   },
   methods: {
     async requestLogIn() {
-      await this.$store.dispatch("user/authenticate", {
+      const errors = await this.$store.dispatch("user/authenticate", {
         user: { ...this.user }
       });
-      this.$buefy.toast.open({
-        message: "Logged in successfully",
-        type: "is-success"
-      });
+      if (!errors) {
+        this.$buefy.toast.open({
+          message: "Logged in successfully",
+          type: "is-success"
+        });
+        this.$router.push("/");
+      } else {
+        this.$buefy.toast.open({
+          message: "Login failed",
+          type: "is-danger"
+        });
+        this.errors = errors;
+      }
     }
   }
 };
