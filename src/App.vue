@@ -1,13 +1,25 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/signup">Sign Up</router-link>
-    </div>
+    <navbar />
     <router-view />
   </div>
 </template>
+
+<script>
+import Navbar from "./components/Navbar";
+
+export default {
+  name: "app",
+  components: { Navbar },
+  created() {
+    const token = localStorage.getItem("jwt-token");
+    if (token) {
+      this.$axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      this.$store.dispatch("user/loadUser", token);
+    }
+  }
+};
+</script>
 
 <style lang="scss">
 #app {

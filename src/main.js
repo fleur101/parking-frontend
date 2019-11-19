@@ -12,11 +12,6 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_URL || "http://localhost:4000/api/v1"
 });
 
-const token = store.getters["user/jwt"];
-if (token) {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer: ${token}`;
-}
-
 axiosInstance.interceptors.response.use(
   response => response,
   error => {

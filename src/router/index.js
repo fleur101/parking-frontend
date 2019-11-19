@@ -3,12 +3,13 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
-import store from "../store";
 
 Vue.use(VueRouter);
 
+const isAuthenticated = () => !!localStorage.getItem("jwt-token");
+
 const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters["user/isAuthenticated"]) {
+  if (!isAuthenticated()) {
     next();
     return;
   }
@@ -16,7 +17,7 @@ const ifNotAuthenticated = (to, from, next) => {
 };
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters["user/isAuthenticated"]) {
+  if (isAuthenticated()) {
     next();
     return;
   }
