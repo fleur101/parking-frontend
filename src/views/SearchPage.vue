@@ -33,6 +33,12 @@
           <p>lat: {{ display_location.latitude }}</p>
           <p>lng: {{ display_location.longitude }}</p>
           <p>pricing zone: {{ display_location.pricing_zone }}</p>
+          <p v-if="display_location.hourly_price">
+            hourly price: {{ display_location.hourly_price }}
+          </p>
+          <p v-if="display_location.realtime_price">
+            realtime price: {{ display_location.realtime_price }}
+          </p>
         </div>
       </div>
     </div>
