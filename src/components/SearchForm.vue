@@ -20,7 +20,6 @@
   </div>
 </template>
 <script>
-import API from "@/lib/api";
 export default {
   name: "SearchForm",
   props: ["status", "locations"],
@@ -33,7 +32,7 @@ export default {
     async fetchLocations() {
       this.$emit("update:status", "pending");
       try {
-        let response = await API.post("/search", this.search);
+        let response = await this.$axios.post("/search", this.search);
         this.$emit("update:locations", response.data);
         this.$emit("update:status", "done");
       } catch (e) {

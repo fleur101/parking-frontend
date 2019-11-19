@@ -1,33 +1,47 @@
+import router from "../../router";
+
 export default {
   namespaced: true,
   state: {
-    user: {}
+    user: {},
+    token: ""
   },
   actions: {
     async authenticate({ commit }, user) {
       try {
         const { data } = await this.$axios.post("/login", user);
-        localStorage.setItem("jwt-token", data.token);
         commit("addUser", data.data);
-        return true;
+        commit("addToken", data.token);
+        localStorage.setItem("jwt-token", data.token);
+        return false;
       } catch (response) {
         console.log(response);
-        return false;
+        return true;
       }
     },
     logout({ commit }) {
-      localStorage.removeItem("jwt-token");
       commit("addUser", {});
+      commit("addToken", "");
+      localStorage.removeItem("jwt-token");
+      router.push("/login");
+    },
+    async loadUser({ commit }, token) {
+      commit("addToken", token);
+      const { data } = await this.$axios.get("/user");
+      commit("addUser", data);
     }
   },
   mutations: {
     addUser(state, user) {
       state.user = user;
+    },
+    addToken(state, token) {
+      state.token = token;
     }
   },
   getters: {
-    isAuthenticated: () => !!localStorage.getItem("jwt-token"),
-    jwt: () => localStorage.getItem("jwt-token") || "",
+    isAuthenticated: state => state.token !== "",
+    jwt: state => state.token || "",
     get: state => state.user
   }
 };

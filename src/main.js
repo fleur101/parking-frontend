@@ -12,11 +12,6 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_API_URL || "http://localhost:4000/api/v1"
 });
 
-const token = store.getters["user/jwt"];
-if (token) {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer: ${token}`;
-}
-
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
@@ -36,6 +31,13 @@ axiosInstance.interceptors.response.use(
 
 Vue.prototype.$axios = axiosInstance;
 Vuex.Store.prototype.$axios = axiosInstance;
+
+const token = localStorage.getItem("jwt-token");
+if (token) {
+  Vue.prototype.$axios.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${token}`;
+}
 
 Vue.config.productionTip = false;
 

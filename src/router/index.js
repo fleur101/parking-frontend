@@ -3,14 +3,14 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
-import store from "../store";
 import SearchPage from "../views/SearchPage.vue";
 
 Vue.use(VueRouter);
 
+const isAuthenticated = () => !!localStorage.getItem("jwt-token");
+
 const ifNotAuthenticated = (to, from, next) => {
-  // TODO: fix the getters, currently I did direct token check
-  if (!localStorage.getItem("jwt-token")) {
+  if (!isAuthenticated()) {
     next();
   } else {
     next("/");
@@ -18,8 +18,7 @@ const ifNotAuthenticated = (to, from, next) => {
 };
 
 const ifAuthenticated = (to, from, next) => {
-  console.log(store.getters);
-  if (localStorage.getItem("jwt-token")) {
+  if (isAuthenticated()) {
     next();
   } else {
     next("/login");
@@ -50,15 +49,6 @@ const routes = [
     name: "search",
     component: SearchPage,
     beforeEnter: ifAuthenticated
-  },
-  {
-    path: "/logout",
-    name: "logout",
-    beforeEnter: (to, from, next) => {
-      console.log("Logging out");
-      store.dispatch("user/logout");
-      next("/login");
-    }
   }
 ];
 

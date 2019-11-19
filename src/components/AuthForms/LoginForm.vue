@@ -60,7 +60,6 @@ export default {
           message: "Login failed",
           type: "is-danger"
         });
-        this.errors = errors;
       }
     }
   }
