@@ -25,10 +25,14 @@ export default {
       localStorage.removeItem("jwt-token");
       router.push("/login");
     },
-    async loadUser({ commit }, token) {
-      commit("addToken", token);
-      const { data } = await this.$axios.get("/user");
-      commit("addUser", data);
+    async loadUser({ commit, dispatch }, token) {
+      try {
+        commit("addToken", token);
+        const { data } = await this.$axios.get("/user");
+        commit("addUser", data);
+      } catch (_err) {
+        dispatch("logout");
+      }
     }
   },
   mutations: {
