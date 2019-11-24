@@ -19,6 +19,18 @@ export default {
         return true;
       }
     },
+    async register({ commit }, user) {
+      try {
+        const { data } = await this.$axios.post("/register", user);
+        commit("addUser", data.data);
+        commit("addToken", data.token);
+        localStorage.setItem("jwt-token", data.token);
+        return false;
+      } catch (response) {
+        console.log(response);
+        return true;
+      }
+    },
     logout({ commit }) {
       commit("addUser", {});
       commit("addToken", "");
