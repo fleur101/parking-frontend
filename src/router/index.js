@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
 import SearchPage from "../views/SearchPage.vue";
+import BookingPage from "../views/BookingPage.vue";
 
 Vue.use(VueRouter);
 
@@ -48,6 +49,12 @@ const routes = [
     path: "/search",
     name: "search",
     component: SearchPage,
+    beforeEnter: ifAuthenticated
+  },
+  {
+    path: "/booking",
+    name: "booking",
+    component: BookingPage,
     beforeEnter: ifAuthenticated
   }
 ];
