@@ -29,15 +29,19 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem("jwt-token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 Vue.prototype.$axios = axiosInstance;
 Vuex.Store.prototype.$axios = axiosInstance;
-
-const token = localStorage.getItem("jwt-token");
-if (token) {
-  Vue.prototype.$axios.defaults.headers.common[
-    "Authorization"
-  ] = `Bearer ${token}`;
-}
 
 Vue.config.productionTip = false;
 

@@ -3,26 +3,24 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "google-map",
-  props: ["name", "locations", "markerClickHandler"],
-  data: function() {
+  props: ["name", "markerClickHandler"],
+  data() {
     return {
       map: "",
       markers: []
     };
   },
   computed: {
-    center: function() {
-      return this.locations.length > 0
-        ? {
-            lat: this.locations[0].latitude,
-            lng: this.locations[0].longitude
-          }
-        : { lat: 58.38, lng: 26.72 };
-    }
+    ...mapGetters({
+      locations: "search/locations",
+      center: "search/map_center"
+    })
   },
-  mounted: function() {
+  mounted() {
     /*eslint-disable */
     const element = document.getElementById(this.name);
     const options = {

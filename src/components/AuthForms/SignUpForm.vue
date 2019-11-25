@@ -62,8 +62,6 @@
 </template>
 
 <script>
-import API from "../../lib/api.js";
-
 export default {
   data() {
     return {
@@ -72,33 +70,26 @@ export default {
     };
   },
   methods: {
-    requestSignUp() {
+    async requestSignUp() {
       let { password, confirmPassword } = this.user;
       let isPasswordValid = password == confirmPassword;
 
       if (isPasswordValid) {
-        let requestBody = {
-          user: {
-            username: this.user.username,
-            password: this.user.password,
-            email: this.user.email,
-            name: this.user.name
-          }
-        };
-
-        API.post("/register", requestBody)
-          .then(response => {
-            this.$buefy.toast.open({
-              message: "Signed Up Successfully",
-              type: "is-succes"
-            });
-            this.$router.push("/");
-            console.log(response);
-            //TODO: Save JWT received in response body in application store (API Needs update)
-          })
-          .catch(e => {
-            this.errors = e.response.data.errors;
+        const errors = await this.$store.dispatch("user/register", {
+          user: { ...this.user }
+        });
+        if (!errors) {
+          this.$buefy.toast.open({
+            message: "Registered and Login successfully",
+            type: "is-success"
           });
+          this.$router.push("/");
+        } else {
+          this.$buefy.toast.open({
+            message: "Registeration failed",
+            type: "is-danger"
+          });
+        }
       } else {
         this.errors.push("Passwords do not match");
       }

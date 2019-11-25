@@ -1,15 +1,11 @@
 <template>
   <div id="wrapper">
-    <SearchForm :status.sync="status" :locations.sync="locations" />
-    <div v-if="status == 'done'" class="columns panel">
+    <SearchForm />
+    <div v-if="isStatusDone" class="columns panel">
       <div class="column">
         <b-tabs v-model="activeTab">
           <b-tab-item label="Map">
-            <GoogleMap
-              name="locations"
-              v-bind:locations="locations"
-              @markerClicked="showLocation"
-            />
+            <GoogleMap name="locations" @markerClicked="showLocation" />
           </b-tab-item>
           <b-tab-item label="List">
             <ul>
@@ -46,16 +42,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import SearchForm from "../components/SearchForm";
 import GoogleMap from "@/components/GoogleMap";
 
 export default {
-  name: "home",
-  data: function() {
+  name: "search",
+  data() {
     return {
-      locations: [],
-      display_location: null,
-      status: null,
       activeTab: 0
     };
   },
@@ -63,9 +57,19 @@ export default {
     SearchForm,
     GoogleMap
   },
+  computed: {
+    ...mapGetters({
+      locations: "search/locations",
+      display_location: "search/display_location"
+    }),
+    isStatusDone() {
+      return this.$store.getters["search/status"] === "done";
+    }
+  },
   methods: {
     showLocation(id) {
-      this.display_location = this.locations.find(loc => loc.id == id);
+      const location = this.locations.find(loc => loc.id == id);
+      this.$store.dispatch("search/setDisplayLocation", location);
     }
   }
 };
@@ -74,10 +78,10 @@ export default {
 <style>
 #wrapper {
   width: 1000px;
-  margin: auto;
+  margin: 40px auto;
 }
 
 .panel {
-  padding-top: 30px;
+  padding-top: 50px;
 }
 </style>
