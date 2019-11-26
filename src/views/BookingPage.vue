@@ -117,7 +117,7 @@ export default {
         } else {
           this.$buefy.toast.open({
             message: "Booking added successfully",
-            type: "is-danger"
+            type: "is-success"
           });
         }
       } else {
