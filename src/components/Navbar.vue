@@ -11,6 +11,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/search' }">
           Search
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/booking' }">
+          Booking
+        </b-navbar-item>
       </template>
     </template>
 
