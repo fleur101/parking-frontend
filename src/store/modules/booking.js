@@ -7,7 +7,7 @@ export default {
     async addBooking({ commit }, booking) {
       commit("setStatus", "pending");
       try {
-        await this.$axios.post("/bookings", booking);
+        await this.$axios.post("/locations/booking", booking);
         commit("setStatus", "done");
         return false;
       } catch (_err) {
