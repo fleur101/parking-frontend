@@ -39,8 +39,8 @@ export default {
     map_center: state => {
       return state.locations.length > 0
         ? {
-            lat: state.locations[0].latitude,
-            lng: state.locations[0].longitude
+            lat: state.locations[0].polygon_coordinates[0].latitude,
+            lng: state.locations[0].polygon_coordinates[0].longitude
           }
         : { lat: 58.38, lng: 26.72 };
     }
