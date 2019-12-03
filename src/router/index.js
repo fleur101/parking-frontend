@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
 import SearchPage from "../views/SearchPage.vue";
-import BookingPage from "../views/BookingPage.vue";
+import ExtendPage from "../views/ExtendPage.vue";
+import ProfilePage from "../views/ProfilePage.vue";
 
 Vue.use(VueRouter);
 
@@ -28,9 +28,15 @@ const ifAuthenticated = (to, from, next) => {
 
 const routes = [
   {
+    path: "/profile",
+    name: "profile",
+    component: ProfilePage,
+    beforeEnter: ifAuthenticated
+  },
+  {
     path: "/",
-    name: "home",
-    component: Home,
+    name: "search",
+    component: SearchPage,
     beforeEnter: ifAuthenticated
   },
   {
@@ -46,15 +52,9 @@ const routes = [
     beforeEnter: ifNotAuthenticated
   },
   {
-    path: "/search",
-    name: "search",
-    component: SearchPage,
-    beforeEnter: ifAuthenticated
-  },
-  {
-    path: "/booking",
-    name: "booking",
-    component: BookingPage,
+    path: "/extend/:bid",
+    name: "extend",
+    component: ExtendPage,
     beforeEnter: ifAuthenticated
   }
 ];

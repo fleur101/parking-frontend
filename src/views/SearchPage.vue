@@ -1,18 +1,18 @@
 <template>
   <div id="wrapper">
     <SearchForm />
-    <div v-if="isStatusDone" class="columns panel">
+    <div class="columns panel">
       <div class="column">
         <b-tabs v-model="activeTab">
           <b-tab-item label="Map">
-            <GoogleMap name="locations" @markerClicked="showLocation" />
+            <GoogleMap name="locations" @polygonClicked="showParkingSpace" />
           </b-tab-item>
           <b-tab-item label="List">
             <ul>
               <li
-                v-for="loc in locations"
+                v-for="loc in parking_spaces"
                 v-bind:key="loc.id"
-                @click="showLocation(loc.id)"
+                @click="showParkingSpace(loc.id)"
               >
                 Parking: {{ loc.title }}
               </li>
@@ -199,9 +199,11 @@ export default {
   },
   computed: {
     ...mapGetters({
-      locations: "search/locations",
+      payment_complete: "search/payment_complete",
+      parking_spaces: "search/parking_spaces",
       display_location: "search/display_location",
-      payment_complete: "search/payment_complete"
+      map_center: "search/map_center",
+      error: "search/error"
     }),
     isStatusDone() {
       return this.$store.getters["search/status"] === "done";
@@ -214,10 +216,10 @@ export default {
     }
   },
   methods: {
-    showLocation(id) {
+    showParkingSpace(id) {
       this.isBookingModal = false;
-      const location = this.locations.find(loc => loc.id == id);
-      this.$store.dispatch("search/setDisplayLocation", location);
+      const parking_lot = this.parking_spaces.find(p => p.id == id);
+      this.$store.dispatch("search/setDisplayLocation", parking_lot);
     },
     showBookingModal(id) {
       this.spot_id = id;
@@ -263,7 +265,9 @@ export default {
     },
     async pay() {
       const { spot_id } = this;
-      const isError = await this.$store.dispatch("search/payBooking", { spot_id });
+      const isError = await this.$store.dispatch("search/payBooking", {
+        spot_id
+      });
       if (isError) {
         this.$buefy.toast.open({
           message: "Error in Payment, please try again",
@@ -284,39 +288,38 @@ export default {
 };
 </script>
 
-<style>
-#wrapper {
-  width: 1000px;
+<style lang="sass">
+#wrapper
+  width: 1200px;
   margin: 40px auto;
-}
 
-.panel {
-  padding-top: 50px;
-}
-.card {
+.panel
+  padding-top: 20px;
+
+.card
   margin-bottom: 10px;
   border-radius: 4px;
   position: relative;
-}
-.card .content p:not(:last-child) {
+
+.card .content p:not(:last-child)
   margin-bottom: 0.3em;
-}
-.card .tag {
+
+.card .tag
   position: absolute;
   right: 8px;
   top: 4px;
-}
-.rightList {
+
+.rightList
   max-height: 670px;
-  overflow: scroll;
+  overflow: auto;
   padding-bottom: 0;
-}
-.modal-card-body {
+
+.modal-card-body
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
-}
-.modal-card {
-  min-width: 500px;
   min-height: fit-content;
-}
+
+.modal-card
+  min-width: 500px;
+  min-height: 700px;
 </style>

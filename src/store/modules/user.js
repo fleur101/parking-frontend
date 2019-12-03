@@ -10,8 +10,7 @@ export default {
     async authenticate({ commit }, user) {
       try {
         const { data } = await this.$axios.post("/login", user);
-        commit("addUser", data.data);
-        commit("addToken", data.token);
+        commit("addUserAndToken", { token: data.token, user: data.data });
         localStorage.setItem("jwt-token", data.token);
         return false;
       } catch (response) {
@@ -22,8 +21,7 @@ export default {
     async register({ commit }, user) {
       try {
         const { data } = await this.$axios.post("/register", user);
-        commit("addUser", data.data);
-        commit("addToken", data.token);
+        commit("addUserAndToken", { token: data.token, user: data.data });
         localStorage.setItem("jwt-token", data.token);
         return false;
       } catch (response) {
@@ -32,26 +30,22 @@ export default {
       }
     },
     logout({ commit }) {
-      commit("addUser", {});
-      commit("addToken", "");
+      commit("addUserAndToken", { token: "", user: {} });
       localStorage.removeItem("jwt-token");
       router.push("/login");
     },
     async loadUser({ commit, dispatch }, token) {
       try {
-        commit("addToken", token);
-        const { data } = await this.$axios.get("/user");
-        commit("addUser", data);
+        const { data: user } = await this.$axios.get("/user");
+        commit("addUserAndToken", { token, user });
       } catch (_err) {
         dispatch("logout");
       }
     }
   },
   mutations: {
-    addUser(state, user) {
+    addUserAndToken(state, { token, user }) {
       state.user = user;
-    },
-    addToken(state, token) {
       state.token = token;
     }
   },
