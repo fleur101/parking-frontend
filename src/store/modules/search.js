@@ -1,22 +1,49 @@
 import { createToken } from "vue-stripe-elements-plus";
+import { getLocation } from "../../lib/location";
 
 export default {
   namespaced: true,
   state: {
-    locations: [],
+    parking_spaces: [],
     display_location: null,
     status: null,
     booking_status: null,
     payment_complete: false,
-    payment_status: null
+    payment_status: null,
+    change_map_center: null,
+    current_map_center: { lng: 0, lat: 0 },
+    error: null
   },
   actions: {
+    // should be separated to map store
+    async showMyPositionOnMap({ commit }) {
+      try {
+        const location = await getLocation();
+        commit("changeMapCenter", location);
+      } catch (error) {
+        commit("setError", error);
+      }
+    },
     async fetchLocations({ commit }, search) {
       commit("setStatus", "pending");
       commit("setDisplayLocation", null);
       try {
         const response = await this.$axios.post("/search", search);
-        commit("addLocations", response.data);
+        commit("addParkingSpaces", response.data);
+        commit("setStatus", "done");
+      } catch (_err) {
+        commit("setStatus", "fail");
+      }
+    },
+    async fetchLocationsByLatLng({ commit }, { lat, lng, end_time }) {
+      commit("setStatus", "pending");
+      try {
+        const response = await this.$axios.post("/search", {
+          lattitude: lat,
+          longitude: lng,
+          end_time
+        });
+        commit("addParkingSpaces", response.data);
         commit("setStatus", "done");
       } catch (_err) {
         commit("setStatus", "fail");
@@ -63,6 +90,10 @@ export default {
         commit("setPaymentStatus", "fail");
         return true;
       }
+    },
+
+    setMapCenter({ commit }, { lat, lng }) {
+      commit("setMapCenter", { lat, lng });
     }
   },
   mutations: {
@@ -71,9 +102,6 @@ export default {
     },
     setDisplayLocation(state, location) {
       state.display_location = location;
-    },
-    addLocations(state, locations) {
-      state.locations = locations;
     },
     setBookingStatus(state, status) {
       state.booking_status = status;
@@ -113,22 +141,29 @@ export default {
         }
       };
       state.display_location.locations.splice(index, 1, payload);
+    },
+    addParkingSpaces(state, pspaces) {
+      state.parking_spaces = pspaces;
+    },
+    changeMapCenter(state, center) {
+      state.change_map_center = center;
+    },
+    setMapCenter(state, center) {
+      state.current_map_center = center;
+    },
+    setError(state, error) {
+      state.error = error;
     }
   },
   getters: {
     display_location: state => state.display_location,
-    locations: state => state.locations,
+    parking_spaces: state => state.parking_spaces,
     status: state => state.status,
-    map_center: state => {
-      return state.locations.length > 0
-        ? {
-            lat: state.locations[0].polygon_coordinates[0].latitude,
-            lng: state.locations[0].polygon_coordinates[0].longitude
-          }
-        : { lat: 58.38, lng: 26.72 };
-    },
     booking_status: state => state.booking_status,
     payment_complete: state => state.payment_complete,
-    payment_status: state => state.payment_status
+    payment_status: state => state.payment_status,
+    map_center: state => state.current_map_center,
+    change_center: state => state.change_map_center,
+    error: state => state.error
   }
 };

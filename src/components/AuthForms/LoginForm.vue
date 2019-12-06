@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <section class="wrapper">
     <h1>Login</h1>
-    <form @submit.prevent="requestLogIn">
+    <form @submit.prevent="login" class="form__login">
       <div v-if="errors.length">
         <b>Please correct the following error(s):</b>
         <ul>
@@ -9,31 +9,29 @@
         </ul>
       </div>
 
-      <div class="form-group">
-        <label>Username:</label>
-        <input
-          type="text"
-          class="form-control"
+      <b-field>
+        <b-input
           required="true"
           v-model="user.username"
+          placeholder="username"
         />
-      </div>
+      </b-field>
 
-      <div class="form-group">
-        <label>Password:</label>
-        <input
+      <b-field>
+        <b-input
           type="password"
           required="true"
-          class="form-control"
           v-model="user.password"
-        />
-      </div>
+          password-reveal
+          placeholder="password"
+        ></b-input>
+      </b-field>
 
-      <div class="form-group">
-        <button class="btn btn-primary">Log In</button>
-      </div>
+      <b-button class="form__btn" native-type="submit" :loading="pending"
+        >Log In</b-button
+      >
     </form>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -41,14 +39,17 @@ export default {
   data() {
     return {
       user: {},
-      errors: []
+      errors: [],
+      pending: false
     };
   },
   methods: {
-    async requestLogIn() {
+    async login() {
+      this.pending = true;
       const errors = await this.$store.dispatch("user/authenticate", {
         user: { ...this.user }
       });
+      this.pending = false;
       if (!errors) {
         this.$buefy.toast.open({
           message: "Logged in successfully",
@@ -65,3 +66,18 @@ export default {
   }
 };
 </script>
+
+<style lang="sass">
+.wrapper
+  width: 350px;
+  margin: auto;
+
+  h1
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+
+  .form__btn
+    display: block;
+    margin: auto;
+</style>

@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <section class="wrapper">
     <h1>Sign Up</h1>
-    <form @submit.prevent="requestSignUp">
+    <form @submit.prevent="register">
       <div v-if="errors.length">
         <b>Please correct the following error(s):</b>
         <ul>
@@ -9,56 +9,52 @@
         </ul>
       </div>
 
-      <div class="form-group">
-        <label>Email:</label>
-        <input
-          type="email"
-          class="form-control"
+      <b-field>
+        <b-input
           required="true"
           v-model="user.email"
+          placeholder="email"
+          type="email"
         />
-      </div>
+      </b-field>
 
-      <div class="form-group">
-        <label>Name:</label>
-        <input
-          type="text"
-          class="form-control"
+      <b-field>
+        <b-input required="true" v-model="user.name" placeholder="name" />
+      </b-field>
+
+      <b-field>
+        <b-input
           required="true"
-          v-model="user.name"
+          v-model="user.username"
+          placeholder="username"
         />
-      </div>
+      </b-field>
 
-      <div class="form-group">
-        <label>Username:</label>
-        <input type="text" class="form-control" v-model="user.username" />
-      </div>
-
-      <div class="form-group">
-        <label>Password:</label>
-        <input
+      <b-field>
+        <b-input
           type="password"
           required="true"
-          class="form-control"
           v-model="user.password"
-        />
-      </div>
+          password-reveal
+          placeholder="password"
+        ></b-input>
+      </b-field>
 
-      <div class="form-group">
-        <label>Confirm Password:</label>
-        <input
+      <b-field>
+        <b-input
           type="password"
           required="true"
-          class="form-control"
           v-model="user.confirmPassword"
-        />
-      </div>
+          password-reveal
+          placeholder="confirm password"
+        ></b-input>
+      </b-field>
 
-      <div class="form-group">
-        <button class="btn btn-primary">Sign Up</button>
-      </div>
+      <b-button class="form__btn" native-type="submit" :loading="pending"
+        >Sign Up</b-button
+      >
     </form>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -66,11 +62,13 @@ export default {
   data() {
     return {
       user: {},
-      errors: []
+      errors: [],
+      pending: false
     };
   },
   methods: {
-    async requestSignUp() {
+    async register() {
+      this.pending = true;
       let { password, confirmPassword } = this.user;
       let isPasswordValid = password == confirmPassword;
 
@@ -93,6 +91,7 @@ export default {
       } else {
         this.errors.push("Passwords do not match");
       }
+      this.pending = false;
     }
   }
 };
