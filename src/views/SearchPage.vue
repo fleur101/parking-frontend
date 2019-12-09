@@ -61,10 +61,7 @@
                   >Book</a
                 >
               </footer>
-              <footer
-                v-if="!loc.is_available && loc.payment_due"
-                class="card-footer"
-              >
+              <footer v-if="isPaymentButton(loc)" class="card-footer">
                 <a
                   @click.prevent="showPaymentModal(loc.id)"
                   class="card-footer-item"
@@ -254,7 +251,7 @@ export default {
             type: "is-success"
           });
           this.isBookingModal = false;
-          this.isPaymentModal = true;
+          if (this.pricing_type === "hourly") this.isPaymentModal = true;
         }
       } else {
         this.$buefy.toast.open({
@@ -283,6 +280,13 @@ export default {
     },
     setPaymentComplete(complete) {
       this.$store.commit("search/setPaymentComplete", complete);
+    },
+    isPaymentButton(loc) {
+      return (
+        !loc.is_available &&
+        loc.booking.pricing_type == "hourly" &&
+        loc.payment_due
+      );
     }
   }
 };
