@@ -93,6 +93,23 @@ export default {
         return true;
       }
     },
+    async payExtension({ commit }, { end_time, booking_id }) {
+      commit("setPaymentStatus", "pending");
+      try {
+        const { token } = await createToken();
+        const payment = {
+          end_time,
+          booking_id,
+          stripe_token: token.id
+        };
+        await this.$axios.patch("/payments", payment);
+        commit("setPaymentStatus", "done");
+        return false;
+      } catch (_err) {
+        commit("setPaymentStatus", "fail");
+        return true;
+      }
+    },
 
     setMapCenter({ commit }, { lat, lng }) {
       commit("setMapCenter", { lat, lng });
