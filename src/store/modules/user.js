@@ -39,12 +39,24 @@ export default {
       } catch (_err) {
         dispatch("logout");
       }
+    },
+    async togglePaymentSetting({ commit }) {
+      try {
+        const { data } = await this.$axios.patch("/toggle_monthly");
+        commit("togglePaymentSetting", data);
+        return false;
+      } catch (response) {
+        return true;
+      }
     }
   },
   mutations: {
     addUserAndToken(state, { token, user }) {
       state.user = user;
       state.token = token;
+    },
+    togglePaymentSetting(state, user) {
+      state.user = user;
     }
   },
   getters: {
