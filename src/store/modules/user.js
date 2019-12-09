@@ -15,7 +15,6 @@ export default {
         localStorage.setItem("jwt-token", data.token);
         return false;
       } catch (response) {
-        console.log(response);
         return true;
       }
     },
@@ -27,7 +26,6 @@ export default {
         localStorage.setItem("jwt-token", data.token);
         return false;
       } catch (response) {
-        console.log(response);
         return true;
       }
     },

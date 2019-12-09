@@ -263,7 +263,9 @@ export default {
     },
     async pay() {
       const { spot_id } = this;
-      const isError = await this.$store.dispatch("search/payBooking", { spot_id });
+      const isError = await this.$store.dispatch("search/payBooking", {
+        spot_id
+      });
       if (isError) {
         this.$buefy.toast.open({
           message: "Error in Payment, please try again",
