@@ -14,6 +14,7 @@
           <b-datetimepicker
             placeholder="End time (optional)"
             v-model="search.end_time"
+            :min-datetime="currentTime"
           ></b-datetimepicker>
         </b-field>
         <b-field>
@@ -31,20 +32,36 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import moment from "moment";
 
 export default {
   name: "SearchForm",
   data: function() {
     return {
-      search: {},
-      datetime: new Date()
+      minimumTime: new Date()
     };
   },
   computed: {
+    ...mapGetters({
+      search: "search/search_form_data"
+    }),
     isStatusPending() {
       return this.$store.getters["search/status"] === "pending";
     }
+  },
+  created() {
+    setInterval(() => {
+      this.currentTime = new Date();
+      if (
+        this.search.end_time &&
+        Math.trunc(this.search.end_time.getTime() / 60000) -
+          Math.trunc(new Date().getTime() / 60000) <
+          0
+      ) {
+        this.search.end_time = new Date();
+      }
+    }, 1000);
   },
   methods: {
     async fetchLocations() {

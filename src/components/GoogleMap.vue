@@ -5,6 +5,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { debounce } from "debounce";
+import moment from "moment";
 export default {
   name: "google-map",
   props: ["name", "markerClickHandler"],
@@ -18,7 +19,8 @@ export default {
     ...mapGetters({
       parking_spaces: "search/parking_spaces",
       change_center: "search/change_center",
-      center: "search/map_center"
+      center: "search/map_center",
+      search_form_data: "search/search_form_data"
     })
   },
   watch: {
@@ -26,7 +28,12 @@ export default {
       this.map.setCenter({ lat: newCenter.lat, lng: newCenter.lng });
     },
     center: function(newCenter) {
-      this.$store.dispatch("search/fetchLocationsByLatLng", newCenter);
+      this.$store.dispatch("search/fetchLocationsByLatLng", {
+        ...newCenter,
+        end_time: this.search_form_data.end_time
+          ? moment(this.search_form_data.end_time.getTime()).format()
+          : null
+      });
     },
     parking_spaces: function(newParkingSpaces) {
       this.parking_lots.forEach(m => m.setMap(null));
@@ -61,7 +68,7 @@ export default {
     this.map = new google.maps.Map(element, options);
     /*eslint-enable */
     this.map.addListener(
-      "center_changed",
+      "dragend",
       debounce(() => {
         const newCenter = this.map.getCenter();
         this.$store.dispatch("search/setMapCenter", {

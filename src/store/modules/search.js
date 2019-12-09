@@ -4,6 +4,7 @@ import { getLocation } from "../../lib/location";
 export default {
   namespaced: true,
   state: {
+    search_form_data: {},
     parking_spaces: [],
     display_location: null,
     status: null,
@@ -29,7 +30,8 @@ export default {
       commit("setDisplayLocation", null);
       try {
         const response = await this.$axios.post("/search", search);
-        commit("addParkingSpaces", response.data);
+        commit("addParkingSpaces", response.data.locations);
+        commit("changeMapCenter", response.data.search_location);
         commit("setStatus", "done");
       } catch (_err) {
         commit("setStatus", "fail");
@@ -43,7 +45,7 @@ export default {
           longitude: lng,
           end_time
         });
-        commit("addParkingSpaces", response.data);
+        commit("addParkingSpaces", response.data.locations);
         commit("setStatus", "done");
       } catch (_err) {
         commit("setStatus", "fail");
@@ -156,6 +158,7 @@ export default {
     }
   },
   getters: {
+    search_form_data: state => state.search_form_data,
     display_location: state => state.display_location,
     parking_spaces: state => state.parking_spaces,
     status: state => state.status,
