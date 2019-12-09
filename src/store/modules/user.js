@@ -24,7 +24,8 @@ export default {
         localStorage.setItem("jwt-token", data.token);
         return false;
       } catch (response) {
-        return true;
+        console.log(response);
+        return response.data.errors;
       }
     },
     logout({ commit }) {

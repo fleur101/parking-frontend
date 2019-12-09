@@ -84,12 +84,13 @@ export default {
           this.$router.push("/");
         } else {
           this.$buefy.toast.open({
-            message: "Registeration failed",
+            message: "Registration failed",
             type: "is-danger"
           });
+          this.errors = errors;
         }
       } else {
-        this.errors.push("Passwords do not match");
+        this.errors = ["Passwords do not match"];
       }
       this.pending = false;
     }
