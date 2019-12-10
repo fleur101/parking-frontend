@@ -20,7 +20,7 @@
       <b-navbar-item tag="div">
         <div v-if="isAuthenticated" class="buttons">
           <strong class="user">User: {{ user.name }}</strong>
-          <a class="button is-danger" @click="logout">
+          <a class="button is-danger logoutBtn" @click="logout">
             <strong>Logout</strong>
           </a>
         </div>

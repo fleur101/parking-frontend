@@ -11,6 +11,7 @@
 
       <b-field>
         <b-input
+          name="email"
           required="true"
           v-model="user.email"
           placeholder="email"
@@ -19,11 +20,12 @@
       </b-field>
 
       <b-field>
-        <b-input required="true" v-model="user.name" placeholder="name" />
+        <b-input name="name" required="true" v-model="user.name" placeholder="name" />
       </b-field>
 
       <b-field>
         <b-input
+          name="username"
           required="true"
           v-model="user.username"
           placeholder="username"
@@ -32,6 +34,7 @@
 
       <b-field>
         <b-input
+          name="password"
           type="password"
           required="true"
           v-model="user.password"
@@ -42,6 +45,7 @@
 
       <b-field>
         <b-input
+          name="cpassword"
           type="password"
           required="true"
           v-model="user.confirmPassword"
@@ -84,12 +88,13 @@ export default {
           this.$router.push("/");
         } else {
           this.$buefy.toast.open({
-            message: "Registeration failed",
+            message: "Registration failed",
             type: "is-danger"
           });
+          this.errors = errors;
         }
       } else {
-        this.errors.push("Passwords do not match");
+        this.errors = ["Passwords do not match"];
       }
       this.pending = false;
     }

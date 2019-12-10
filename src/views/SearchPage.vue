@@ -47,10 +47,24 @@
                   <p><strong>Spot: </strong>{{ loc.spot_number }}</p>
                   <p><strong>Pricing Zone: </strong>{{ loc.pricing_zone }}</p>
                   <p v-if="loc.hourly_price">
-                    <strong>Hourly Price: </strong>€{{ loc.hourly_price }}
+                    <strong>Hourly Price: </strong>€{{
+                      formatPrice(loc.hourly_price)
+                    }}
                   </p>
                   <p v-if="loc.realtime_price">
-                    <strong>Realtime Price: </strong>€{{ loc.realtime_price }}
+                    <strong>Realtime Price: </strong>€{{
+                      formatPrice(loc.realtime_price)
+                    }}
+                  </p>
+                  <p v-if="loc.estimated_hourly_price">
+                    <strong>Estimated Houlry Price: </strong>€{{
+                      formatPrice(loc.estimated_hourly_price)
+                    }}
+                  </p>
+                  <p v-if="loc.estimated_realtime_price">
+                    <strong>Estimated Realtime Price: </strong>€{{
+                      formatPrice(loc.estimated_realtime_price)
+                    }}
                   </p>
                 </div>
               </div>
@@ -61,10 +75,7 @@
                   >Book</a
                 >
               </footer>
-              <footer
-                v-if="!loc.is_available && loc.payment_due"
-                class="card-footer"
-              >
+              <footer v-if="isPaymentButton(loc)" class="card-footer">
                 <a
                   @click.prevent="showPaymentModal(loc.id)"
                   class="card-footer-item"
@@ -129,45 +140,12 @@
         </div>
       </form>
     </b-modal>
-    <b-modal
-      :active.sync="isPaymentModal"
-      has-modal-card
-      trap-focus
-      aria-role="dialog"
-      aria-modal
-    >
-      <form action="">
-        <div class="modal-card" style="width: auto">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Booking Payment Modal</p>
-          </header>
-          <section class="modal-card-body">
-            <h3>Please enter your payment details:</h3>
-            <label for="card">Credit Card</label>
-            <p>
-              Test using this credit card:
-              <span class="cc-number">4242 4242 4242 4242</span>
-            </p>
-            <p>and enter any 5 digits for the zip code</p>
-            <br />
-            <card
-              class="stripe-card"
-              :class="{ payment_complete }"
-              stripe="pk_test_y5NSigQERlpCNpq8dHlkGVmy00gyIO7KiY"
-              @change="setPaymentComplete($event.complete)"
-            />
-            <br />
-            <b-button
-              class="button is-primary"
-              :loading="isPaymentStatusPending"
-              :disabled="!payment_complete"
-              @click.prevent="pay"
-              >Pay with credit card</b-button
-            >
-          </section>
-        </div>
-      </form>
-    </b-modal>
+    <PaymentModal
+      :show="isPaymentModal"
+      :params="{ spot_id }"
+      paymentAction="search/payBooking"
+      @success="() => (this.isPaymentModal = false)"
+    />
   </div>
 </template>
 
@@ -175,8 +153,8 @@
 import { mapGetters } from "vuex";
 import SearchForm from "../components/SearchForm";
 import GoogleMap from "@/components/GoogleMap";
+import PaymentModal from "@/components/PaymentModal";
 import moment from "moment";
-import { Card } from "vue-stripe-elements-plus";
 
 export default {
   name: "search",
@@ -192,14 +170,30 @@ export default {
       pricing_type: null
     };
   },
+  created() {
+    const isInvalid = time =>
+      time &&
+      Math.trunc(time.getTime() / 60000) -
+        Math.trunc(new Date().getTime() / 60000) <
+        0;
+
+    setInterval(() => {
+      this.current_date = new Date();
+      if (isInvalid(this.start_time)) {
+        this.start_time = new Date();
+      }
+      if (isInvalid(this.end_time)) {
+        this.end_time = new Date();
+      }
+    }, 1000);
+  },
   components: {
     SearchForm,
     GoogleMap,
-    Card
+    PaymentModal
   },
   computed: {
     ...mapGetters({
-      payment_complete: "search/payment_complete",
       parking_spaces: "search/parking_spaces",
       display_location: "search/display_location",
       map_center: "search/map_center",
@@ -210,12 +204,12 @@ export default {
     },
     isStatusPending() {
       return this.$store.getters["search/booking_status"] === "pending";
-    },
-    isPaymentStatusPending() {
-      return this.$store.getters["search/payment_status"] === "pending";
     }
   },
   methods: {
+    formatPrice(price) {
+      return price.toFixed(2);
+    },
     showParkingSpace(id) {
       this.isBookingModal = false;
       const parking_lot = this.parking_spaces.find(p => p.id == id);
@@ -254,35 +248,21 @@ export default {
             type: "is-success"
           });
           this.isBookingModal = false;
-          this.isPaymentModal = true;
+          if (this.pricing_type === "hourly") this.isPaymentModal = true;
         }
       } else {
         this.$buefy.toast.open({
-          message: "Start Time should be lesser than End time",
+          message: "Start Time should be less than End time",
           type: "is-danger"
         });
       }
     },
-    async pay() {
-      const { spot_id } = this;
-      const isError = await this.$store.dispatch("search/payBooking", {
-        spot_id
-      });
-      if (isError) {
-        this.$buefy.toast.open({
-          message: "Error in Payment, please try again",
-          type: "is-danger"
-        });
-      } else {
-        this.$buefy.toast.open({
-          message: "Payment done successfully",
-          type: "is-success"
-        });
-        this.isPaymentModal = false;
-      }
-    },
-    setPaymentComplete(complete) {
-      this.$store.commit("search/setPaymentComplete", complete);
+    isPaymentButton(loc) {
+      return (
+        !loc.is_available &&
+        loc.booking.pricing_type == "hourly" &&
+        loc.payment_due
+      );
     }
   }
 };
