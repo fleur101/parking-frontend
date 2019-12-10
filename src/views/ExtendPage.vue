@@ -8,7 +8,7 @@
           required
           placeholder="Click to select end time..."
           v-model="input_time"
-          :min-datetime="current_date"
+          :min-datetime="min_time"
         ></b-datetimepicker>
       </b-field>
       <b-field>
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import moment from "moment";
 import PaymentModal from "@/components/PaymentModal";
 
@@ -38,14 +39,31 @@ export default {
   data() {
     return {
       pending: false,
-      input_time: new Date(),
+      input_time: null,
       isPaymentOpen: false
     };
+  },
+  created() {
+    this.input_time = this.min_time;
   },
   components: {
     PaymentModal
   },
   computed: {
+    ...mapGetters({
+      bookings: "booking/bookings"
+    }),
+    old_end_time() {
+      return new Date(
+        this.bookings.find(el => el.id == this.booking_id).end_time
+      );
+    },
+    min_time() {
+      if (new Date() < this.old_end_time) {
+        return this.old_end_time;
+      }
+      return new Date();
+    },
     end_time() {
       return moment(this.input_time.getTime()).format();
     },
