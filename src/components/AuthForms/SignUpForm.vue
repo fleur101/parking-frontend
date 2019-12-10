@@ -11,6 +11,7 @@
 
       <b-field>
         <b-input
+          name="email"
           required="true"
           v-model="user.email"
           placeholder="email"
@@ -19,11 +20,12 @@
       </b-field>
 
       <b-field>
-        <b-input required="true" v-model="user.name" placeholder="name" />
+        <b-input name="name" required="true" v-model="user.name" placeholder="name" />
       </b-field>
 
       <b-field>
         <b-input
+          name="username"
           required="true"
           v-model="user.username"
           placeholder="username"
@@ -32,6 +34,7 @@
 
       <b-field>
         <b-input
+          name="password"
           type="password"
           required="true"
           v-model="user.password"
@@ -42,6 +45,7 @@
 
       <b-field>
         <b-input
+          name="cpassword"
           type="password"
           required="true"
           v-model="user.confirmPassword"
