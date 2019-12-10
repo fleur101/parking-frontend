@@ -3,7 +3,6 @@
     <h1>Login</h1>
     <form @submit.prevent="login" class="form__login">
       <div v-if="errors.length">
-        <b>Please correct the following error(s):</b>
         <ul>
           <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
         </ul>

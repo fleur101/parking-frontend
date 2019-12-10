@@ -47,19 +47,23 @@
                   <p><strong>Spot: </strong>{{ loc.spot_number }}</p>
                   <p><strong>Pricing Zone: </strong>{{ loc.pricing_zone }}</p>
                   <p v-if="loc.hourly_price">
-                    <strong>Hourly Price: </strong>€{{ loc.realtime_price }}
+                    <strong>Hourly Price: </strong>€{{
+                      formatPrice(loc.hourly_price)
+                    }}
                   </p>
                   <p v-if="loc.realtime_price">
-                    <strong>Realtime Price: </strong>€{{ loc.realtime_price }}
+                    <strong>Realtime Price: </strong>€{{
+                      formatPrice(loc.realtime_price)
+                    }}
                   </p>
                   <p v-if="loc.estimated_hourly_price">
                     <strong>Estimated Houlry Price: </strong>€{{
-                      loc.estimated_hourly_price
+                      formatPrice(loc.estimated_hourly_price)
                     }}
                   </p>
                   <p v-if="loc.estimated_realtime_price">
                     <strong>Estimated Realtime Price: </strong>€{{
-                      loc.estimated_realtime_price
+                      formatPrice(loc.estimated_realtime_price)
                     }}
                   </p>
                 </div>
@@ -186,6 +190,9 @@ export default {
     }
   },
   methods: {
+    formatPrice(price) {
+      return price.toFixed(2);
+    },
     showParkingSpace(id) {
       this.isBookingModal = false;
       const parking_lot = this.parking_spaces.find(p => p.id == id);
