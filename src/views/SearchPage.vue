@@ -170,6 +170,23 @@ export default {
       pricing_type: null
     };
   },
+  created() {
+    const isInvalid = time =>
+      time &&
+      Math.trunc(time.getTime() / 60000) -
+        Math.trunc(new Date().getTime() / 60000) <
+        0;
+
+    setInterval(() => {
+      this.current_date = new Date();
+      if (isInvalid(this.start_time)) {
+        this.start_time = new Date();
+      }
+      if (isInvalid(this.end_time)) {
+        this.end_time = new Date();
+      }
+    }, 1000);
+  },
   components: {
     SearchForm,
     GoogleMap,
@@ -235,7 +252,7 @@ export default {
         }
       } else {
         this.$buefy.toast.open({
-          message: "Start Time should be lesser than End time",
+          message: "Start Time should be less than End time",
           type: "is-danger"
         });
       }

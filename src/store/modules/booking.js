@@ -1,14 +1,15 @@
 export default {
   namespaced: true,
   state: {
-    status: null
+    status: null,
+    bookings: []
   },
   actions: {
     async fetchBookings({ commit }) {
       commit("setStatus", "pending");
       try {
-        const bookings = await this.$axios.get("/bookings");
-        this.bookings = bookings.data;
+        const { data } = await this.$axios.get("/my_bookings");
+        commit("setBookings", data);
         commit("setStatus", "done");
       } catch (err) {
         commit("setStatus", "fail");
@@ -29,6 +30,9 @@ export default {
   mutations: {
     setStatus(state, status) {
       state.status = status;
+    },
+    setBookings(state, bookings) {
+      state.bookings = bookings;
     }
   },
   getters: {
