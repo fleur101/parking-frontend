@@ -11,6 +11,7 @@
 
       <b-field>
         <b-input
+          name="username"
           required="true"
           v-model="user.username"
           placeholder="username"
@@ -19,6 +20,7 @@
 
       <b-field>
         <b-input
+          name="password"
           type="password"
           required="true"
           v-model="user.password"
