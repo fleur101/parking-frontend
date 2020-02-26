@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default class API {
   static baseURL() {
-    return "http://localhost:4000/api/v1";
+    return "https://tartu-parking-backend.herokuapp.com/api/v1";
   }
 
   static post(url, params) {

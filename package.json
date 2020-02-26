@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "NODE_ENV=production vue-cli-service build",
+    "build": "set NODE_ENV=production & vue-cli-service build & npm run build:copy",
+    "build:copy": "copy /Y dist\\index.html dist\\200.html & echo tartu-parking.surge.sh > dist\\CNAME",
     "lint": "vue-cli-service lint --fix",
     "start-backend": "cd ../parking-backend && mix phx.server",
     "test:e2e": "vue-cli-service test:e2e"
